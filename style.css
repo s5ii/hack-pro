@@ -7,8 +7,8 @@ body {
 
 #gameArea {
   position: relative;
-  width: 600px;
-  height: 200px;
+  width: 800px; /* مرحلة أطول */
+  height: 300px;
   margin: 20px auto;
   background: #111;
   border: 2px solid #00ff99;
@@ -34,7 +34,7 @@ body {
   border-radius: 5px;
 }
 
-.info { width: 600px; margin: auto; }
+.info { width: 800px; margin: auto; }
 
 .hidden { display: none; }
 
