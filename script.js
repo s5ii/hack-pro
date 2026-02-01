@@ -76,13 +76,14 @@ function submitCommand() {
 
 function printLine(text) {
   const p = document.createElement("p");
-  p.innerText = text;
   terminal.appendChild(p);
-  terminal.scrollTop = terminal.scrollHeight;
+
+  let i = 0;
+  const interval = setInterval(() => {
+    p.innerText += text.charAt(i);
+    i++;
+    if (i >= text.length) clearInterval(interval);
+    terminal.scrollTop = terminal.scrollHeight;
+  }, 20);
 }
 
-function playSound() {
-  const sound = document.getElementById("sound");
-  sound.currentTime = 0;
-  sound.play();
-}
