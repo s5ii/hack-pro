@@ -74,8 +74,17 @@ function submitCommand() {
   }
 }
 
-function printLine(text) {
+function printLine(text, type = "normal") {
   const p = document.createElement("p");
+
+  if (type === "success") p.style.color = "#00ffaa";
+  if (type === "error") p.style.color = "#ff4444";
+  if (type === "title") {
+    p.style.color = "#00ff99";
+    p.style.fontWeight = "bold";
+    p.style.textAlign = "center";
+  }
+
   terminal.appendChild(p);
 
   let i = 0;
@@ -86,4 +95,5 @@ function printLine(text) {
     terminal.scrollTop = terminal.scrollHeight;
   }, 20);
 }
+
 
