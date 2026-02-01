@@ -1,49 +1,39 @@
 const gameArea = document.getElementById("gameArea");
-const levelSpan = document.getElementById("level");
-const scoreSpan = document.getElementById("score");
-const endScreen = document.getElementById("endScreen");
-const finalScore = document.getElementById("finalScore");
-const bar = document.getElementById("bar");
-const jumpSound = document.getElementById("jumpSound");
 
+// اللاعب
 let player = {x:10,y:0,w:30,h:30};
-let velocity = {x:0,y:0};
+let velocityY = 0;
 let onGround = false;
-let score = 0;
-let level = 1;
-let progress = 0;
-
 const gravity = 0.5;
-const keys = {A:false,D:false,W:false};
+const speed = 5;
 
-// منصات ثابتة ومتحركة
-let platforms = [
-  {x:50,y:0,w:100,h:10,dir:1}, 
-  {x:150,y:50,w:100,h:10,dir:1},
-  {x:300,y:100,w:100,h:10,dir:1},
-  {x:450,y:50,w:100,h:10,dir:1},
-  {x:600,y:120,w:100,h:10,dir:1},
-  {x:750,y:80,w:100,h:10,dir:1},
-  {x:800,y:0,w:100,h:10,dir:1}
+// المنصات
+const platforms = [
+  {x:50,y:0,w:100,h:10},
+  {x:200,y:50,w:100,h:10},
+  {x:400,y:100,w:100,h:10},
+  {x:600,y:50,w:100,h:10},
+  {x:750,y:0,w:100,h:10}
 ];
 
-// إنشاء اللاعب ومنصات HTML
+// إنشاء عناصر HTML
 const playerEl = document.createElement("div");
 playerEl.id="player";
 gameArea.appendChild(playerEl);
 
 platforms.forEach(p=>{
-  const e=document.createElement("div");
-  e.className="platform";
-  e.style.left=p.x+"px";
-  e.style.bottom=p.y+"px";
-  e.style.width=p.w+"px";
-  e.style.height=p.h+"px";
-  p.el=e;
-  gameArea.appendChild(e);
+  const el = document.createElement("div");
+  el.className="platform";
+  el.style.left=p.x+"px";
+  el.style.bottom=p.y+"px";
+  el.style.width=p.w+"px";
+  el.style.height=p.h+"px";
+  p.el = el;
+  gameArea.appendChild(el);
 });
 
 // التحكم
+const keys={A:false,D:false,W:false};
 document.addEventListener("keydown", e=>{
   if(e.key.toUpperCase()==="A") keys.A=true;
   if(e.key.toUpperCase()==="D") keys.D=true;
@@ -55,46 +45,32 @@ document.addEventListener("keyup", e=>{
   if(e.key.toUpperCase()==="W") keys.W=false;
 });
 
-// الحركة
-function movePlayer(){
-  if(keys.A) player.x -=5;
-  if(keys.D) player.x +=5;
-  if(player.x<0) player.x=0;
-  if(player.x>770) player.x=770;
-
-  if(keys.W && onGround){
-    velocity.y = 10;
-    onGround=false;
-    jumpSound.play();
-  }
-}
-
-// تحديث اللاعب
+// تحديث موقع اللاعب
 function updatePlayer(){
-  playerEl.style.left = player.x+"px";
-  playerEl.style.bottom = player.y+"px";
-}
-
-// تحريك المنصات البسيطة (صعود ونزول)
-function movePlatforms(){
-  platforms.forEach(p=>{
-    p.y += p.dir*0.5;
-    if(p.y>150 || p.y<50) p.dir*=-1;
-    p.el.style.bottom = p.y+"px";
-  });
+  playerEl.style.left = player.x + "px";
+  playerEl.style.bottom = player.y + "px";
 }
 
 // اللعبة
 function gameLoop(){
-  movePlayer();
+  // حركة يسار/يمين
+  if(keys.A) player.x -= speed;
+  if(keys.D) player.x += speed;
+
+  // القفز
+  if(keys.W && onGround){
+    velocityY = 10;
+    onGround=false;
+  }
 
   // الجاذبية
-  velocity.y -= gravity;
-  player.y += velocity.y;
+  velocityY -= gravity;
+  player.y += velocityY;
 
+  // الأرض
   if(player.y<0){
     player.y=0;
-    velocity.y=0;
+    velocityY=0;
     onGround=true;
   }
 
@@ -103,51 +79,15 @@ function gameLoop(){
   platforms.forEach(p=>{
     if(player.x + player.w > p.x && player.x < p.x + p.w &&
        player.y >= p.y && player.y <= p.y + 20 &&
-       velocity.y <=0){
+       velocityY <=0){
       player.y = p.y;
-      velocity.y=0;
+      velocityY=0;
       onGround=true;
-      score++;
-      scoreSpan.innerText=score;
-      progress = Math.min(score/50*100,100);
-      bar.style.width = progress+"%";
     }
   });
 
-  // وصول النهاية
-  if(player.x+player.w>=800){
-    finishStage();
-  }
-
-  movePlatforms();
   updatePlayer();
   requestAnimationFrame(gameLoop);
-}
-
-// إنهاء المرحلة
-function finishStage(){
-  level++;
-  levelSpan.innerText=level;
-  if(level>3){
-    finalScore.innerText=score;
-    endScreen.classList.remove("hidden");
-  }else{
-    player.x=10;
-    player.y=0;
-  }
-}
-
-// إعادة اللعب
-function restartGame(){
-  score=0;
-  progress=0;
-  level=1;
-  scoreSpan.innerText=score;
-  levelSpan.innerText=level;
-  bar.style.width="0%";
-  endScreen.classList.add("hidden");
-  player.x=10;
-  player.y=0;
 }
 
 gameLoop();
