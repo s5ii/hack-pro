@@ -8,7 +8,7 @@ body {
 #gameArea {
   position: relative;
   width: 600px;
-  height: 200px; /* مرحلة قصيرة */
+  height: 200px;
   margin: 20px auto;
   background: #111;
   border: 2px solid #00ff99;
