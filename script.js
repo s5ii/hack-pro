@@ -8,7 +8,7 @@ let player, playerPos, velocityY, onGround;
 let score = 0;
 let level = 1;
 let platforms = [];
-const gravity = 0.5;
+const gravity = 0.5; // قفز سلس
 
 // إنشاء اللاعب
 function createPlayer(){
@@ -27,14 +27,17 @@ function updatePlayer(){
   player.style.bottom = playerPos.y + "px";
 }
 
-// إنشاء المنصات القصيرة للمرحلة
+// إنشاء منصات المرحلة الطويلة
 function createPlatforms(){
   platforms.forEach(p=>gameArea.removeChild(p.el));
   platforms = [];
   addPlatform(50,0);
-  addPlatform(200,50);
-  addPlatform(400,100);
-  addPlatform(550,0);
+  addPlatform(150,50);
+  addPlatform(300,100);
+  addPlatform(450,50);
+  addPlatform(600,120);
+  addPlatform(750,80);
+  addPlatform(800,0); // نهاية المرحلة
 }
 
 // إضافة منصة
@@ -64,7 +67,7 @@ function movePlayer(){
   if(keys.A) playerPos.x -=5;
   if(keys.D) playerPos.x +=5;
   if(playerPos.x<0) playerPos.x=0;
-  if(playerPos.x>570) playerPos.x=570;
+  if(playerPos.x>770) playerPos.x=770; // حسب طول المرحلة
   if(keys.W && onGround){
     velocityY=10;
     onGround=false;
@@ -99,7 +102,7 @@ function gameLoop(){
   });
 
   // الوصول لنهاية المرحلة
-  if(playerPos.x+30>=580){
+  if(playerPos.x+30>=800){
     finishStage();
   }
 
