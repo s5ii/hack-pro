@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>Cyber Runner: النسخة النهائية</title>
+<title>Cyber Runner: النسخة الفخمة</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,6 +13,9 @@
 <div class="info">
   <p>مرحلة: <span id="level">1</span></p>
   <p>نقاط: <span id="score">0</span></p>
+  <div class="progress">
+    <div id="bar"></div>
+  </div>
 </div>
 
 <div id="endScreen" class="hidden">
@@ -20,6 +23,8 @@
   <p>نقاطك: <span id="finalScore"></span></p>
   <button onclick="restartGame()">إعادة اللعب</button>
 </div>
+
+<audio id="jumpSound" src="jump.mp3"></audio>
 
 <script src="script.js"></script>
 </body>
