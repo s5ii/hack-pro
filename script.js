@@ -1,99 +1,65 @@
+const player = document.getElementById("player");
+const gameArea = document.getElementById("gameArea");
+const levelSpan = document.getElementById("level");
+const scoreSpan = document.getElementById("score");
+
+let playerPos = { x: 10, y: 0 };
+let velocityY = 0;
+let onGround = true;
+let score = 0;
 let level = 1;
-let time = 30;
-let timer;
-let progress = 0;
 
-const terminal = document.getElementById("terminal");
-const input = document.getElementById("input");
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowLeft") move(-10);
+  if (e.key === "ArrowRight") move(10);
+  if (e.key === "ArrowUp") jump();
+});
 
-function startGame() {
-  document.getElementById("bootScreen").classList.add("hidden");
-  document.getElementById("game").classList.remove("hidden");
-  printLine(">> الاتصال بالسيرفر الآمن...");
-  printLine(">> تم الاتصال بنجاح.");
-  newChallenge();
-  startTimer();
+function move(dx) {
+  playerPos.x += dx;
+  if(playerPos.x < 0) playerPos.x = 0;
+  if(playerPos.x > 470) playerPos.x = 470;
+  updatePlayer();
 }
 
-function startTimer() {
-  timer = setInterval(() => {
-    time--;
-    document.getElementById("timer").innerText = "TIME: " + time;
+function jump() {
+  if(onGround){
+    velocityY = -15;
+    onGround = false;
+  }
+}
 
-    if (time <= 0) {
-      clearInterval(timer);
-      printLine("!! انتهى الوقت - فشل الاختراق");
-      input.disabled = true;
+function updatePlayer() {
+  player.style.left = playerPos.x + "px";
+  player.style.bottom = playerPos.y + "px";
+}
+
+function gameLoop() {
+  velocityY += 0.8; // جاذبية
+  playerPos.y -= velocityY;
+  
+  if(playerPos.y <= 0) {
+    playerPos.y = 0;
+    velocityY = 0;
+    onGround = true;
+  }
+
+  // تحقق من التصادم مع المنصات
+  document.querySelectorAll(".platform").forEach(p => {
+    const platX = p.offsetLeft;
+    const platY = gameArea.offsetHeight - p.offsetTop - 10; // bottom
+    if(playerPos.x + 30 > platX && playerPos.x < platX + 100 &&
+       playerPos.y <= platY && playerPos.y >= platY - 10 && velocityY > 0) {
+      playerPos.y = platY;
+      velocityY = 0;
+      onGround = true;
+      score += 10;
+      scoreSpan.innerText = score;
     }
-  }, 1000);
+  });
+
+  updatePlayer();
+  requestAnimationFrame(gameLoop);
 }
 
-function randomCode(length) {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let code = "";
-  for (let i = 0; i < length; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-}
-
-let currentCode = "";
-
-function newChallenge() {
-  time = 30;
-  document.getElementById("level").innerText = "LEVEL: " + level;
-
-  currentCode = randomCode(4 + level);
-  printLine("");
-  printLine(">> مرحلة " + level);
-  printLine(">> فك الرمز التالي:");
-  printLine(">> " + currentCode.split("").join(" "));
-}
-
-function submitCommand() {
-  const value = input.value.toUpperCase();
-  input.value = "";
-
-  printLine("> " + value);
-
-  if (value === currentCode) {
-    printLine("✔️ تم فك التشفير بنجاح!");
-    level++;
-    progress += 20;
-    document.getElementById("bar").style.width = progress + "%";
-
-    if (level > 5) {
-      clearInterval(timer);
-      printLine("🏆 تم السيطرة على النظام بالكامل!");
-      input.disabled = true;
-    } else {
-      newChallenge();
-    }
-  } else {
-    printLine("❌ رمز خاطئ - حاول مرة أخرى");
-  }
-}
-
-function printLine(text, type = "normal") {
-  const p = document.createElement("p");
-
-  if (type === "success") p.style.color = "#00ffaa";
-  if (type === "error") p.style.color = "#ff4444";
-  if (type === "title") {
-    p.style.color = "#00ff99";
-    p.style.fontWeight = "bold";
-    p.style.textAlign = "center";
-  }
-
-  terminal.appendChild(p);
-
-  let i = 0;
-  const interval = setInterval(() => {
-    p.innerText += text.charAt(i);
-    i++;
-    if (i >= text.length) clearInterval(interval);
-    terminal.scrollTop = terminal.scrollHeight;
-  }, 20);
-}
-
-
+gameLoop();
