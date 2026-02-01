@@ -103,11 +103,19 @@ h1 {
 /* الطرفية */
 #terminal { white-space: pre-line;
 
-#terminal p {
-  line-height: 1.8;
-  letter-spacing: 1.5px;
-  margin: 8px 0;
+#terminal {
+  background: black;
+  border: 1px solid #00ff00;
+  height: 150px;
+  overflow-y: auto;
+  padding: 10px;
+  text-align: left;
+  margin-bottom: 10px;
+
+  white-space: pre-wrap;   /* هذا المهم جدًا */
+  direction: ltr;         /* يخلي العرض مرتب حتى لو النص عربي */
 }
+
 
 
 /* الإدخال */
@@ -153,4 +161,5 @@ button:hover {
   from {opacity: 0;}
   to {opacity: 1;}
 }
+
 
