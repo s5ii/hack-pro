@@ -2,38 +2,22 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>Hacker Terminal Pro</title>
+  <title>Cyber Runner</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <h1>🕹️ Cyber Runner</h1>
 
-<div id="bootScreen">
-  <p>Booting System...</p>
-  <p>Loading Modules...</p>
-  <p>Connecting to Secure Server...</p>
-  <button onclick="startGame()">▶ بدء الاختراق</button>
-</div>
-
-<div id="game" class="hidden">
-  <h1>🟩 HACKER TERMINAL</h1>
-
-  <div class="top">
-    <span id="level">LEVEL: 1</span>
-    <span id="timer">TIME: 30</span>
+  <div id="gameArea">
+    <div id="player"></div>
+    <div class="platform" style="left: 50px; top: 300px;"></div>
+    <div class="platform" style="left: 200px; top: 250px;"></div>
+    <div class="platform" style="left: 350px; top: 200px;"></div>
   </div>
 
-  <div class="progress">
-    <div id="bar"></div>
-  </div>
+  <p>مرحلة: <span id="level">1</span></p>
+  <p>نقاط: <span id="score">0</span></p>
 
-  <div id="terminal"></div>
-
-  <input type="text" id="input" placeholder="> اكتب الأمر هنا..." oninput="playSound()">
-  <button onclick="submitCommand()">EXECUTE</button>
-
-  <audio id="sound" src="typing.mp3"></audio>
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
