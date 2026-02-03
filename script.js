@@ -8,6 +8,7 @@ const jumpSound = document.getElementById("jumpSound");
 const finishSound = document.getElementById("finishSound");
 
 let player, playerPos, velocityY, onGround;
+let rotation = 0; // دوران اللاعب
 let score = 0;
 let level = 1;
 let platforms = [];
@@ -21,6 +22,7 @@ function createPlayer() {
   playerPos = { x: 10, y: 0 };
   velocityY = 0;
   onGround = false;
+  rotation = 0;
   updatePlayer();
 }
 
@@ -28,6 +30,7 @@ function createPlayer() {
 function updatePlayer() {
   player.style.left = playerPos.x + "px";
   player.style.bottom = playerPos.y + "px";
+  player.style.transform = `rotate(${rotation}deg)`;
 }
 
 // إنشاء المنصات
@@ -67,15 +70,15 @@ function addPlatform(x, y, moving=false){
 
 // التحكم
 document.addEventListener("keydown", (e) => {
-  if(e.key==="ArrowLeft") move(-10);
-  if(e.key==="ArrowRight") move(10);
-  if(e.key==="ArrowUp") jump();
+  if(e.key === "ArrowLeft") move(-10);
+  if(e.key === "ArrowRight") move(10);
+  if(e.key === "ArrowUp") jump();
 });
 
 function move(dx){
   playerPos.x += dx;
-  if(playerPos.x <0) playerPos.x=0;
-  if(playerPos.x>570) playerPos.x=570;
+  if(playerPos.x < 0) playerPos.x = 0;
+  if(playerPos.x > 570) playerPos.x = 570;
   updatePlayer();
 }
 
@@ -91,6 +94,14 @@ function jump(){
 function gameLoop(){
   velocityY -= gravity;
   playerPos.y += velocityY;
+
+  // لف اللاعب وهو في الهواء
+  if(!onGround){
+    rotation += 8; // سرعة اللف (غير الرقم للتحكم)
+  } else {
+    rotation = 0;
+  }
+
   if(playerPos.y < 0){
     playerPos.y = 0;
     velocityY = 0;
@@ -100,18 +111,22 @@ function gameLoop(){
   // تصادم مع المنصات
   platforms.forEach(p => {
     const platX = p.el.offsetLeft;
-    const platY = p.el.offsetTop; // from top
+    const platY = p.el.offsetTop; // من الأعلى
     const platBottom = gameArea.offsetHeight - platY - 10;
 
-    if(playerPos.x + 30 > platX && playerPos.x < platX + 100 &&
-       playerPos.y <= platBottom && playerPos.y >= platBottom - 15 &&
-       velocityY < 0){
+    if(
+      playerPos.x + 30 > platX &&
+      playerPos.x < platX + 100 &&
+      playerPos.y <= platBottom &&
+      playerPos.y >= platBottom - 15 &&
+      velocityY < 0
+    ){
       playerPos.y = platBottom;
       velocityY = 0;
       onGround = true;
       score += 1;
       scoreSpan.innerText = score;
-      bar.style.width = Math.min(score*2,100) + "%";
+      bar.style.width = Math.min(score * 2, 100) + "%";
     }
   });
 
@@ -127,12 +142,15 @@ function gameLoop(){
 // إنهاء المرحلة
 function finishStage(){
   finishSound.play();
-  if(level>=3){
+  if(level >= 3){
     endGame();
-  } else{
+  } else {
     level++;
     levelSpan.innerText = level;
-    playerPos = {x:10,y:0};
+    playerPos = { x: 10, y: 0 };
+    velocityY = 0;
+    onGround = false;
+    rotation = 0;
     createPlatforms();
   }
 }
@@ -160,14 +178,3 @@ function restartGame(){
 createPlayer();
 createPlatforms();
 gameLoop();
-
-
-
-
-
-
-
-
-
-
-
