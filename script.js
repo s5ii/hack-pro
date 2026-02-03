@@ -17,7 +17,7 @@ let level = 1;
 let platforms = [];
 
 // فيزياء احترافية
-const gravity = 0.4;   // جاذبية ناعمة
+const gravity = 0.2;   // جاذبية ناعمة
 const jumpPower = 18; // قوة القفز
 
 // إنشاء اللاعب
@@ -206,4 +206,5 @@ function restartGame(){
 createPlayer();
 createPlatforms();
 gameLoop();
+
 
