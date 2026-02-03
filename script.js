@@ -11,14 +11,16 @@ let player, playerPos, velocityY, onGround;
 let rotation = 0;
 let tilt = 0;
 let direction = 1; // 1 = يمين | -1 = يسار
-let keys = {}; // للتحكم المستمر
+let keys = {};
 let score = 0;
 let level = 1;
 let platforms = [];
 
-// فيزياء احترافية
-const gravity = 0.2;   // جاذبية ناعمة
-const jumpPower = 18; // قوة القفز
+// ===== فيزياء متوازنة =====
+const gravityUp = 0.6;    // جاذبية أثناء الصعود
+const gravityDown = 1.1; // جاذبية أثناء السقوط (أثقل شوي)
+const jumpPower = 14;    // قوة القفز
+const moveSpeed = 3;    // سرعة الحركة يمين ويسار (أبطأ)
 
 // إنشاء اللاعب
 function createPlayer() {
@@ -74,7 +76,7 @@ function addPlatform(x, y, moving=false){
   platforms.push({el: p, x: x, y: y, moving});
 }
 
-// التحكم المستمر
+// التحكم
 document.addEventListener("keydown", (e) => {
   keys[e.key] = true;
   e.preventDefault();
@@ -94,7 +96,7 @@ function jump(){
   if(onGround){
     velocityY = jumpPower;
     onGround = false;
-    rotation += 20 * direction;
+    rotation += 15 * direction;
     jumpSound.play();
   }
 }
@@ -102,30 +104,31 @@ function jump(){
 // اللعبة
 function gameLoop(){
 
-  // حركة يمين ويسار مستمرة
+  // حركة أبطأ وسلسة
   if(keys["ArrowLeft"]){
     direction = -1;
-    move(-5);
+    move(-moveSpeed);
   }
   if(keys["ArrowRight"]){
     direction = 1;
-    move(5);
+    move(moveSpeed);
   }
   if(keys["ArrowUp"]){
     jump();
   }
 
-  // فيزياء الجاذبية
+  // جاذبية ذكية (صعود ناعم / سقوط أثقل)
+  const gravity = velocityY > 0 ? gravityUp : gravityDown;
   velocityY -= gravity;
   playerPos.y += velocityY;
 
   // دوران احترافي في الهواء
   if(!onGround){
-    rotation += 10 * direction;
-    tilt = Math.max(-15, Math.min(15, tilt + (5 * direction)));
+    rotation += 6 * direction;
+    tilt = Math.max(-10, Math.min(10, tilt + (3 * direction)));
   } else {
-    rotation *= 0.85;
-    tilt *= 0.8;
+    rotation *= 0.8;
+    tilt *= 0.7;
   }
 
   // الأرض
@@ -157,7 +160,7 @@ function gameLoop(){
     }
   });
 
-  // الوصول لنهاية المرحلة
+  // نهاية المرحلة
   if(playerPos.x + 30 >= 580 && playerPos.y > 0){
     finishStage();
   }
@@ -206,5 +209,3 @@ function restartGame(){
 createPlayer();
 createPlatforms();
 gameLoop();
-
-
