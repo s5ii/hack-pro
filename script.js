@@ -1,6 +1,18 @@
-// JS كامل
+// script.js كامل للعبة
 const gameArea = document.getElementById("gameArea");
-const gameAreaInner = document.getElementById("gameAreaInner");
+gameArea.style.width = "580px";
+gameArea.style.height = "400px";
+gameArea.style.overflow = "hidden";
+gameArea.style.position = "relative";
+gameArea.style.border = "2px solid #000";
+
+const gameAreaInner = document.createElement("div");
+gameAreaInner.id = "gameAreaInner";
+gameAreaInner.style.position = "absolute";
+gameAreaInner.style.left = "0px";
+gameAreaInner.style.bottom = "0px";
+gameArea.appendChild(gameAreaInner);
+
 const levelSpan = document.getElementById("level");
 const scoreSpan = document.getElementById("score");
 const bar = document.getElementById("bar");
@@ -51,10 +63,9 @@ function addPlatform(x, y, moving=false, disappearing=false){
   p.style.position = "absolute";
   p.style.width = "100px";
   p.style.height = "15px";
-  p.style.background = "blue";
+  p.style.background = moving ? "orange" : "blue";
   p.style.left = x + "px";
   p.style.bottom = y + "px";
-  if(moving) p.style.background = "orange";
   gameAreaInner.appendChild(p);
 
   platforms.push({el:p, x, y, moving, disappearing, active:true, dir:1});
