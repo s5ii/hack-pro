@@ -1,4 +1,4 @@
-// script.js – نسخة ممتعة ومحدثة
+// script.js النهائي – كل شيء أخضر، منصات أفقي فقط، تصادم مضبوط
 const gameArea = document.getElementById("gameArea");
 gameArea.style.width = "580px";
 gameArea.style.height = "400px";
@@ -30,8 +30,8 @@ const LEVEL_WIDTH = 2000;
 let platforms = [], windForce = 0, lowGravityZone = false;
 
 // فيزياء محسنة
-let jumpPower = 13, moveSpeed = 2.4;
-let gravityUp = 0.6, gravityDown = 1.1;
+let jumpPower = 12, moveSpeed = 3;
+let gravityUp = 0.6, gravityDown = 1.2;
 
 // إنشاء اللاعب – أخضر
 function createPlayer() {
@@ -39,7 +39,7 @@ function createPlayer() {
   player.id = "player";
   player.style.width = "30px";
   player.style.height = "30px";
-  player.style.background = "green";
+  player.style.background = "green"; // شخصية أخضر
   player.style.position = "absolute";
   gameAreaInner.appendChild(player);
   playerPos = { x: 10, y: 0 };
@@ -57,14 +57,14 @@ function updatePlayer() {
   player.style.transform = `rotate(${rotation}deg) skewX(${tilt}deg)`;
 }
 
-// إضافة منصة – كل المنصات أخضر، لا تختفي
+// إضافة منصة – أخضر، لا تختفي
 function addPlatform(x, y, moving=false){
   const p = document.createElement("div");
   p.classList.add("platform");
   p.style.position = "absolute";
   p.style.width = "100px";
   p.style.height = "15px";
-  p.style.background = "green";
+  p.style.background = "green"; // كل المنصات أخضر
   p.style.left = x + "px";
   p.style.bottom = y + "px";
   gameAreaInner.appendChild(p);
@@ -72,7 +72,7 @@ function addPlatform(x, y, moving=false){
   platforms.push({el:p, x, y, moving, active:true, dir:1});
 }
 
-// إنشاء منصات المرحل طويلة ومنظمة وممتعة
+// إنشاء منصات المرحل ممتعة وطويلة
 function createPlatforms(){
   platforms.forEach(p => p.el.remove());
   platforms = [];
@@ -81,11 +81,11 @@ function createPlatforms(){
   let yBase = 50;
   let x = 0;
 
-  for(let i=0; i<50; i++){ // أكثر منصات للمرحلة لتكون ممتعة
-    const gap = 80 + Math.random()*50; // مسافة معقولة بين المنصات
+  for(let i=0; i<50; i++){
+    const gap = 80 + Math.random()*50; 
     x += gap;
-    const y = yBase + (Math.random()*80 - 40); // ارتفاع متغير +/- 40px
-    const moving = Math.random()>0.7; // بعض المنصات تتحرك
+    const y = yBase + (Math.random()*80 - 40); 
+    const moving = Math.random()>0.7; // بعض المنصات تتحرك أفقي
     addPlatform(x, Math.max(10, Math.min(350,y)), moving);
   }
 
@@ -101,12 +101,12 @@ document.addEventListener("keyup",(e)=>{keys[e.key]=false;});
 function move(dx){playerPos.x+=dx; if(playerPos.x<0)playerPos.x=0; if(playerPos.x>LEVEL_WIDTH-30)playerPos.x=LEVEL_WIDTH-30;}
 function jump(){if(onGround){velocityY=jumpPower;onGround=false;rotation+=15*direction;jumpSound.play();}}
 
-// تحديث المنصات المتحركة
+// تحديث المنصات المتحركة أفقياً
 function updatePlatforms(){
   platforms.forEach(p=>{
     if(!p.moving || !p.active) return;
-    p.x += p.dir * 1.5;
-    if(p.x<20 || p.x>LEVEL_WIDTH-120) p.dir*=-1;
+    p.x += p.dir * 1.5; // حركة أفقي
+    if(p.x < 20 || p.x > LEVEL_WIDTH - 120) p.dir *= -1;
     p.el.style.left = p.x+"px";
   });
 }
@@ -130,14 +130,24 @@ function gameLoop(){
 
   updatePlatforms();
 
+  // تصادم مضبوط: اللاعب يقف على المنصة ولا يخترقها
   platforms.forEach(p=>{
-    const platX = p.el.offsetLeft;
-    const platY = p.el.offsetTop;
-    const platBottom = gameArea.offsetHeight - platY -10;
-
-    if(playerPos.x+30>platX && playerPos.x<platX+100 && playerPos.y<=platBottom && playerPos.y>=platBottom-15 && velocityY<0){
-      playerPos.y=platBottom; velocityY=0; onGround=true;
-      score++; scoreSpan.innerText = score; bar.style.width = Math.min(score*2,100)+"%";
+    if(!p.active) return;
+    const platX = p.x;
+    const platY = p.y;
+    if(
+      playerPos.x + 30 > platX &&
+      playerPos.x < platX + 100 &&
+      playerPos.y <= platY + 15 &&
+      playerPos.y >= platY &&
+      velocityY < 0
+    ){
+      playerPos.y = platY + 15;
+      velocityY = 0;
+      onGround = true;
+      score++;
+      scoreSpan.innerText = score;
+      bar.style.width = Math.min(score*2,100)+"%";
     }
   });
 
@@ -179,4 +189,3 @@ function restartGame(){
 createPlayer();
 createPlatforms();
 gameLoop();
-
