@@ -30,7 +30,7 @@ const LEVEL_WIDTH = 2000;
 let platforms = [], windForce = 0, lowGravityZone = false;
 
 // فيزياء ناعمة
-let gravityUp = 0.9, gravityDown = 1.0, jumpPower = 7, moveSpeed = 3;
+let gravityUp = 0.9, gravityDown = 1.0, jumpPower = 13, moveSpeed = 2;
 
 // إنشاء اللاعب
 function createPlayer() {
@@ -181,3 +181,4 @@ function restartGame(){
 createPlayer();
 createPlatforms();
 gameLoop();
+
