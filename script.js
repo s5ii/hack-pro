@@ -31,7 +31,7 @@ let platforms = [], windForce = 0, lowGravityZone = false;
 
 // فيزياء محسنة
 let jumpPower = 12, moveSpeed = 3;
-let gravityUp = 0.6, gravityDown = 1.2;
+let gravityUp = 0.6, gravityDown = 0.9;
 
 // إنشاء اللاعب – أخضر
 function createPlayer() {
@@ -189,3 +189,4 @@ function restartGame(){
 createPlayer();
 createPlatforms();
 gameLoop();
+
