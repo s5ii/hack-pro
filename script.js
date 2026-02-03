@@ -8,11 +8,13 @@ const jumpSound = document.getElementById("jumpSound");
 const finishSound = document.getElementById("finishSound");
 
 let player, playerPos, velocityY, onGround;
-let rotation = 0; // دوران اللاعب
+let rotation = 0;
+let tilt = 0;
+let direction = 1; // 1 = يمين | -1 = يسار
 let score = 0;
 let level = 1;
 let platforms = [];
-const gravity = 0.8;
+const gravity = 1.1;
 
 // إنشاء اللاعب
 function createPlayer() {
@@ -23,6 +25,7 @@ function createPlayer() {
   velocityY = 0;
   onGround = false;
   rotation = 0;
+  tilt = 0;
   updatePlayer();
 }
 
@@ -30,12 +33,11 @@ function createPlayer() {
 function updatePlayer() {
   player.style.left = playerPos.x + "px";
   player.style.bottom = playerPos.y + "px";
-  player.style.transform = `rotate(${rotation}deg)`;
+  player.style.transform = `rotate(${rotation}deg) skewX(${tilt}deg)`;
 }
 
 // إنشاء المنصات
 function createPlatforms() {
-  // تنظيف المنصات القديمة
   platforms.forEach(p => gameArea.removeChild(p.el));
   platforms = [];
 
@@ -46,7 +48,7 @@ function createPlatforms() {
     addPlatform(500, 100);
   } else if(level === 2){
     addPlatform(30, 80);
-    addPlatform(150, 180, true); // متحركة
+    addPlatform(150, 180, true);
     addPlatform(300, 250);
     addPlatform(450, 150, true);
   } else if(level === 3){
@@ -70,8 +72,14 @@ function addPlatform(x, y, moving=false){
 
 // التحكم
 document.addEventListener("keydown", (e) => {
-  if(e.key === "ArrowLeft") move(-10);
-  if(e.key === "ArrowRight") move(10);
+  if(e.key === "ArrowLeft"){
+    direction = -1;
+    move(-10);
+  }
+  if(e.key === "ArrowRight"){
+    direction = 1;
+    move(10);
+  }
   if(e.key === "ArrowUp") jump();
 });
 
@@ -84,8 +92,9 @@ function move(dx){
 
 function jump(){
   if(onGround){
-    velocityY = 15;
+    velocityY = 16;
     onGround = false;
+    rotation += 20 * direction; // لفه قوية مع القفزة
     jumpSound.play();
   }
 }
@@ -95,11 +104,14 @@ function gameLoop(){
   velocityY -= gravity;
   playerPos.y += velocityY;
 
-  // لف اللاعب وهو في الهواء
+  // دوران احترافي في الهواء
   if(!onGround){
-    rotation += 8; // سرعة اللف (غير الرقم للتحكم)
+    rotation += 10 * direction;
+    tilt = Math.max(-15, Math.min(15, tilt + (5 * direction)));
   } else {
-    rotation = 0;
+    // رجوع ناعم للاستقامة
+    rotation *= 0.85;
+    tilt *= 0.8;
   }
 
   if(playerPos.y < 0){
@@ -111,7 +123,7 @@ function gameLoop(){
   // تصادم مع المنصات
   platforms.forEach(p => {
     const platX = p.el.offsetLeft;
-    const platY = p.el.offsetTop; // من الأعلى
+    const platY = p.el.offsetTop;
     const platBottom = gameArea.offsetHeight - platY - 10;
 
     if(
@@ -151,6 +163,7 @@ function finishStage(){
     velocityY = 0;
     onGround = false;
     rotation = 0;
+    tilt = 0;
     createPlatforms();
   }
 }
@@ -178,4 +191,3 @@ function restartGame(){
 createPlayer();
 createPlatforms();
 gameLoop();
-
