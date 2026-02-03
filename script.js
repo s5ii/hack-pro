@@ -19,7 +19,7 @@ let platforms = [];
 // ===== فيزياء متوازنة =====
 const gravityUp = 0.6;    // جاذبية أثناء الصعود
 const gravityDown = 1.1; // جاذبية أثناء السقوط (أثقل شوي)
-const jumpPower = 14;    // قوة القفز
+const jumpPower = 11;    // قوة القفز
 const moveSpeed = 3;    // سرعة الحركة يمين ويسار (أبطأ)
 
 // إنشاء اللاعب
@@ -209,3 +209,4 @@ function restartGame(){
 createPlayer();
 createPlatforms();
 gameLoop();
+
