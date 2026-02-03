@@ -15,7 +15,10 @@ let keys = {}; // للتحكم المستمر
 let score = 0;
 let level = 1;
 let platforms = [];
-const gravity = 1.1;
+
+// فيزياء احترافية
+const gravity = 0.8;   // جاذبية ناعمة
+const jumpPower = 18; // قوة القفز
 
 // إنشاء اللاعب
 function createPlayer() {
@@ -89,7 +92,7 @@ function move(dx){
 
 function jump(){
   if(onGround){
-    velocityY = 16;
+    velocityY = jumpPower;
     onGround = false;
     rotation += 20 * direction;
     jumpSound.play();
@@ -112,6 +115,7 @@ function gameLoop(){
     jump();
   }
 
+  // فيزياء الجاذبية
   velocityY -= gravity;
   playerPos.y += velocityY;
 
@@ -124,6 +128,7 @@ function gameLoop(){
     tilt *= 0.8;
   }
 
+  // الأرض
   if(playerPos.y < 0){
     playerPos.y = 0;
     velocityY = 0;
