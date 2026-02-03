@@ -12,7 +12,7 @@ let rotation = 0; // دوران اللاعب
 let score = 0;
 let level = 1;
 let platforms = [];
-const gravity = 1.1;
+const gravity = 0.8;
 
 // إنشاء اللاعب
 function createPlayer() {
@@ -178,3 +178,4 @@ function restartGame(){
 createPlayer();
 createPlatforms();
 gameLoop();
+
