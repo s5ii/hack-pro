@@ -21,8 +21,8 @@ let windForce = 0;
 let lowGravityZone = false;
 
 // ===== فيزياء ناعمة وبطيئة =====
-let gravityUp = 0.7;
-let gravityDown = 0.9;
+let gravityUp = 0.9;
+let gravityDown = 1.0;
 const jumpPower = 13;
 const moveSpeed = 2;
 
@@ -46,46 +46,13 @@ function updatePlayer() {
   player.style.transform = `rotate(${rotation}deg) skewX(${tilt}deg)`;
 }
 
-// ===== نظام المراحل الذكي =====
-function createPlatforms() {
-  platforms.forEach(p => p.el.remove());
-  platforms = [];
-
-  windForce = 0;
-  lowGravityZone = false;
-
-  const count = 4 + Math.floor(level / 2);
-
-  for (let i = 0; i < count; i++) {
-    const x = 40 + Math.random() * 480;
-    const y = 50 + i * (260 / count);
-
-    const moving = level >= 6 && Math.random() > 0.5;
-    const disappearing = level >= 11 && Math.random() > 0.6;
-
-    addPlatform(x, y, moving, disappearing);
-  }
-
-  // رياح
-  if (level >= 16) {
-    windForce = (Math.random() > 0.5 ? 1 : -1) * (0.4 + level * 0.03);
-  }
-
-  // جاذبية منخفضة
-  if (level >= 21) {
-    lowGravityZone = true;
-  }
-}
-
 // إضافة منصة
 function addPlatform(x, y, moving = false, disappearing = false) {
   const p = document.createElement("div");
   p.classList.add("platform");
   if (moving) p.classList.add("moving");
-
   p.style.left = x + "px";
   p.style.bottom = y + "px";
-
   gameArea.appendChild(p);
 
   platforms.push({
@@ -97,6 +64,39 @@ function addPlatform(x, y, moving = false, disappearing = false) {
     active: true,
     dir: 1
   });
+}
+
+// ===== نظام مراحل طويل ومرتب =====
+function createPlatforms() {
+  platforms.forEach(p => p.el.remove());
+  platforms = [];
+
+  windForce = 0;
+  lowGravityZone = false;
+
+  const count = 6 + Math.floor(level / 5); // عدد المنصات يزيد تدريجياً
+  const stepY = 60; // ارتفاع ثابت بين المنصات
+  const startY = 50;
+
+  for (let i = 0; i < count; i++) {
+    const x = 40 + i * (480 / count); // توزيع مرتب أفقي
+    const y = startY + i * stepY;
+
+    const moving = level >= 6 && level < 16 && Math.random() > 0.5;
+    const disappearing = level >= 11 && level < 26 && Math.random() > 0.5;
+
+    addPlatform(x, y, moving, disappearing);
+  }
+
+  // رياح في مراحل 16-30
+  if (level >= 16) {
+    windForce = (Math.random() > 0.5 ? 1 : -1) * (0.4 + level * 0.03);
+  }
+
+  // جاذبية منخفضة في مراحل 21-30
+  if (level >= 21) {
+    lowGravityZone = true;
+  }
 }
 
 // التحكم المستمر
@@ -129,10 +129,8 @@ function jump() {
 function updatePlatforms() {
   platforms.forEach(p => {
     if (!p.moving || !p.active) return;
-
     p.x += p.dir * 1.5;
     if (p.x < 20 || p.x > 520) p.dir *= -1;
-
     p.el.style.left = p.x + "px";
   });
 }
@@ -163,8 +161,8 @@ function gameLoop() {
     gravityUp = 0.4;
     gravityDown = 0.6;
   } else {
-    gravityUp = 0.7;
-    gravityDown = 0.9;
+    gravityUp = 0.9;
+    gravityDown = 1.0;
   }
 
   // فيزياء
@@ -194,7 +192,6 @@ function gameLoop() {
   // تصادم مع المنصات
   platforms.forEach(p => {
     if (!p.active) return;
-
     const platX = p.el.offsetLeft;
     const platY = p.el.offsetTop;
     const platBottom = gameArea.offsetHeight - platY - 10;
@@ -274,10 +271,3 @@ function restartGame() {
 createPlayer();
 createPlatforms();
 gameLoop();
-
-
-
-
-
-
-
