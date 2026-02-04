@@ -76,8 +76,41 @@ function addPlatform(x, y, moving=false){
 function createPlatforms(){
   platforms.forEach(p => p.el.remove());
   platforms = [];
-  windForce = 0; lowGravityZone = false;
+  windForce = 0; 
+  lowGravityZone = false;
 
+  let x = 0;
+  let lastY = 50;
+
+  const PLATFORM_COUNT = 30;   // عدد أقل = ترتيب أفضل
+  const MIN_GAP = 120;        // أقل مسافة أفقية بين المنصات
+  const MAX_GAP = 200;        // أكبر مسافة
+  const MIN_Y = 40;
+  const MAX_Y = 300;
+
+  for(let i = 0; i < PLATFORM_COUNT; i++){
+    // مسافة أفقية مرتبة
+    const gap = MIN_GAP + Math.random() * (MAX_GAP - MIN_GAP);
+    x += gap;
+
+    // ارتفاع ذكي (ما يطلع فجأة عالي أو واطي جدًا)
+    let y = lastY + (Math.random() * 100 - 50);
+    y = Math.max(MIN_Y, Math.min(MAX_Y, y));
+    lastY = y;
+
+    // بعض المنصات تتحرك
+    const moving = Math.random() > 0.75;
+
+    addPlatform(x, y, moving);
+  }
+
+  // تأثيرات المراحل المتقدمة
+  if(level >= 16) {
+    windForce = (Math.random() > 0.5 ? 1 : -1) * (0.3 + level * 0.02);
+  }
+  if(level >= 21) {
+    lowGravityZone = true;
+  }
   let yBase = 50;
   let x = 0;
 
@@ -189,3 +222,4 @@ function restartGame(){
 createPlayer();
 createPlatforms();
 gameLoop();
+
