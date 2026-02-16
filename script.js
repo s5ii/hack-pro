@@ -686,10 +686,15 @@ function drawBackground() {
 // إدارة الشاشات
 // ========================================
 function showScreen(screenId) {
+    // إخفاء جميع الشاشات
     document.querySelectorAll('.screen').forEach(screen => {
-        screen.classList.remove('active');
+        screen.style.display = 'none';
     });
-    document.getElementById(screenId).classList.add('active');
+    // عرض الشاشة المطلوبة
+    const targetScreen = document.getElementById(screenId);
+    if (targetScreen) {
+        targetScreen.style.display = 'flex';
+    }
 }
 
 function startGame() {
@@ -857,9 +862,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keyup', (e) => {
         keys[e.key] = false;
     });
-    
-    // عرض شاشة البداية
-    showScreen('startScreen');
 });
 
 // ========================================
