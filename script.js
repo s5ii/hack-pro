@@ -49,6 +49,119 @@ let enemies = [];
 let fires = [];
 let keys = {};
 
+// نظام المستخدم
+let currentUser = null;
+
+// ========================================
+// نظام التسجيل وتسجيل الدخول
+// ========================================
+
+// التحقق من تسجيل الدخول
+function checkLogin() {
+    const savedUser = localStorage.getItem('ninjaGameUser');
+    if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        showScreen('startScreen');
+        updateUserDisplay();
+        return true;
+    }
+    return false;
+}
+
+// عرض شاشة التسجيل أو تسجيل الدخول
+function initAuth() {
+    const hasAccount = localStorage.getItem('ninjaGameAccount');
+    if (hasAccount) {
+        showScreen('loginScreen');
+    } else {
+        showScreen('registerScreen');
+    }
+}
+
+// تحديث عرض اسم المستخدم
+function updateUserDisplay() {
+    if (currentUser) {
+        document.getElementById('displayUsername').textContent = currentUser.username;
+    }
+}
+
+// تسجيل حساب جديد
+function registerUser(username, password, confirmPassword) {
+    // التحقق من وجود حساب مسبق
+    if (localStorage.getItem('ninjaGameAccount')) {
+        return { success: false, message: 'يوجد حساب مسجل بالفعل!' };
+    }
+    
+    // التحقق من البيانات
+    if (!username || username.length < 3) {
+        return { success: false, message: 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل' };
+    }
+    
+    if (!password || password.length < 4) {
+        return { success: false, message: 'كلمة المرور يجب أن تكون 4 أحرف على الأقل' };
+    }
+    
+    if (password !== confirmPassword) {
+        return { success: false, message: 'كلمة المرور غير متطابقة' };
+    }
+    
+    // حفظ الحساب
+    const account = {
+        username: username,
+        password: password,
+        createdAt: new Date().toISOString()
+    };
+    
+    localStorage.setItem('ninjaGameAccount', JSON.stringify(account));
+    
+    // تسجيل دخول تلقائي
+    currentUser = { username: username };
+    localStorage.setItem('ninjaGameUser', JSON.stringify(currentUser));
+    
+    return { success: true };
+}
+
+// تسجيل الدخول
+function loginUser(username, password) {
+    const savedAccount = localStorage.getItem('ninjaGameAccount');
+    
+    if (!savedAccount) {
+        return { success: false, message: 'لا يوجد حساب مسجل! يرجى إنشاء حساب جديد' };
+    }
+    
+    const account = JSON.parse(savedAccount);
+    
+    if (account.username !== username) {
+        return { success: false, message: 'اسم المستخدم غير صحيح' };
+    }
+    
+    if (account.password !== password) {
+        return { success: false, message: 'كلمة المرور غير صحيحة' };
+    }
+    
+    // تسجيل الدخول
+    currentUser = { username: username };
+    localStorage.setItem('ninjaGameUser', JSON.stringify(currentUser));
+    
+    return { success: true };
+}
+
+// تسجيل الخروج
+function logoutUser() {
+    localStorage.removeItem('ninjaGameUser');
+    currentUser = null;
+    
+    // إيقاف اللعبة إذا كانت تعمل
+    if (gameState === 'playing' || gameState === 'paused') {
+        gameState = 'menu';
+        clearInterval(gameInterval);
+        clearInterval(timeInterval);
+    }
+    
+    // العودة لشاشة تسجيل الدخول
+    showScreen('loginScreen');
+}
+
 // ========================================
 // فئة اللاعب
 // ========================================
@@ -372,19 +485,9 @@ class Enemy {
             
             // تحديث موقع Y ليبقى على المنصة
             this.y = this.platform.y - this.height;
-            
-            // إذا كانت المنصة متحركة، تحرك معها
-            if (this.platform.type === 'moving') {
-                this.x += this.platform.moveSpeed * this.platform.moveDirection;
-            }
         } else if (this.type === 'stationary' && this.platform) {
             // العدو الثابت يبقى في مكانه على المنصة
             this.y = this.platform.y - this.height;
-            
-            // إذا كانت المنصة متحركة، تحرك معها
-            if (this.platform.type === 'moving') {
-                this.x += this.platform.moveSpeed * this.platform.moveDirection;
-            }
         }
     }
 
@@ -1213,6 +1316,66 @@ document.addEventListener('DOMContentLoaded', () => {
     
     canvas.width = CONFIG.canvas.width;
     canvas.height = CONFIG.canvas.height;
+    
+    // التحقق من تسجيل الدخول
+    if (!checkLogin()) {
+        initAuth();
+    }
+    
+    // معالجات نموذج التسجيل
+    document.getElementById('registerForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('registerUsername').value.trim();
+        const password = document.getElementById('registerPassword').value;
+        const confirmPassword = document.getElementById('registerConfirmPassword').value;
+        
+        const result = registerUser(username, password, confirmPassword);
+        
+        if (result.success) {
+            updateUserDisplay();
+            showScreen('startScreen');
+        } else {
+            document.getElementById('registerError').textContent = result.message;
+        }
+    });
+    
+    // معالجات نموذج تسجيل الدخول
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        
+        const result = loginUser(username, password);
+        
+        if (result.success) {
+            updateUserDisplay();
+            showScreen('startScreen');
+        } else {
+            document.getElementById('loginError').textContent = result.message;
+        }
+    });
+    
+    // التبديل بين شاشات التسجيل
+    document.getElementById('showLoginFromRegister').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('registerError').textContent = '';
+        document.getElementById('registerForm').reset();
+        showScreen('loginScreen');
+    });
+    
+    document.getElementById('showRegisterFromLogin').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('loginError').textContent = '';
+        document.getElementById('loginForm').reset();
+        showScreen('registerScreen');
+    });
+    
+    // زر تسجيل الخروج
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+            logoutUser();
+        }
+    });
     
     // أزرار الشاشة الرئيسية
     document.getElementById('startBtn').addEventListener('click', startGame);
