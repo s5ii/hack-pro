@@ -10,6 +10,74 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- شاشة التسجيل -->
+    <div id="registerScreen" class="screen">
+        <div class="auth-container">
+            <h1 class="auth-title">
+                <span class="title-glow">مغامرات</span>
+                <span class="title-main">النينجا</span>
+            </h1>
+            <div class="auth-box">
+                <h2 class="auth-box-title">إنشاء حساب جديد</h2>
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="registerUsername">اسم المستخدم</label>
+                        <input type="text" id="registerUsername" placeholder="أدخل اسم المستخدم" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">كلمة المرور</label>
+                        <input type="password" id="registerPassword" placeholder="أدخل كلمة المرور" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerConfirmPassword">تأكيد كلمة المرور</label>
+                        <input type="password" id="registerConfirmPassword" placeholder="أعد إدخال كلمة المرور" required>
+                    </div>
+                    <div class="error-message" id="registerError"></div>
+                    <button type="submit" class="btn btn-primary auth-btn">
+                        <span class="btn-text">إنشاء الحساب</span>
+                        <span class="btn-icon">✨</span>
+                    </button>
+                </form>
+                <p class="auth-switch">
+                    لديك حساب بالفعل؟ 
+                    <a href="#" id="showLoginFromRegister">تسجيل الدخول</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- شاشة تسجيل الدخول -->
+    <div id="loginScreen" class="screen">
+        <div class="auth-container">
+            <h1 class="auth-title">
+                <span class="title-glow">مغامرات</span>
+                <span class="title-main">النينجا</span>
+            </h1>
+            <div class="auth-box">
+                <h2 class="auth-box-title">تسجيل الدخول</h2>
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="loginUsername">اسم المستخدم</label>
+                        <input type="text" id="loginUsername" placeholder="أدخل اسم المستخدم" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">كلمة المرور</label>
+                        <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" required>
+                    </div>
+                    <div class="error-message" id="loginError"></div>
+                    <button type="submit" class="btn btn-primary auth-btn">
+                        <span class="btn-text">دخول</span>
+                        <span class="btn-icon">🎮</span>
+                    </button>
+                </form>
+                <p class="auth-switch">
+                    ليس لديك حساب؟ 
+                    <a href="#" id="showRegisterFromLogin">إنشاء حساب جديد</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- شاشة البداية -->
     <div id="startScreen" class="screen" style="display: flex;">
         <div class="stars"></div>
@@ -73,6 +141,20 @@
 
     <!-- شاشة اللعب -->
     <div id="gameScreen" class="screen">
+        <!-- اسم اللاعب وزر الخروج -->
+        <div class="user-info">
+            <div class="username-display">
+                <span class="user-icon">👤</span>
+                <span id="displayUsername"></span>
+            </div>
+        </div>
+        
+        <!-- زر تسجيل الخروج -->
+        <button id="logoutBtn" class="logout-btn">
+            <span>تسجيل الخروج</span>
+            <span class="logout-icon">🚪</span>
+        </button>
+        
         <!-- شريط المعلومات العلوي -->
         <div class="game-hud">
             <div class="hud-item">
