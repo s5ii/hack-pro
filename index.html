@@ -154,6 +154,46 @@
             <span>تسجيل الخروج</span>
             <span class="logout-icon">🚪</span>
         </button>
+
+        <!-- لوحة الأدمن - تظهر فقط للـ owner -->
+        <div id="adminPanel" class="admin-panel" style="display:none;">
+            <div class="admin-header">
+                <span>👑 لوحة التحكم</span>
+            </div>
+            <div class="admin-controls">
+                <div class="admin-level-select">
+                    <label>انتقل للمرحلة:</label>
+                    <div class="level-buttons">
+                        <div class="level-row">
+                            <button onclick="adminGoToLevel(1)"  class="lvl-btn">1</button>
+                            <button onclick="adminGoToLevel(2)"  class="lvl-btn">2</button>
+                            <button onclick="adminGoToLevel(3)"  class="lvl-btn">3</button>
+                            <button onclick="adminGoToLevel(4)"  class="lvl-btn">4</button>
+                            <button onclick="adminGoToLevel(5)"  class="lvl-btn">5</button>
+                        </div>
+                        <div class="level-row">
+                            <button onclick="adminGoToLevel(6)"  class="lvl-btn">6</button>
+                            <button onclick="adminGoToLevel(7)"  class="lvl-btn">7</button>
+                            <button onclick="adminGoToLevel(8)"  class="lvl-btn">8</button>
+                            <button onclick="adminGoToLevel(9)"  class="lvl-btn">9</button>
+                            <button onclick="adminGoToLevel(10)" class="lvl-btn">10</button>
+                        </div>
+                        <div class="level-row">
+                            <button onclick="adminGoToLevel(11)" class="lvl-btn">11</button>
+                            <button onclick="adminGoToLevel(12)" class="lvl-btn">12</button>
+                            <button onclick="adminGoToLevel(13)" class="lvl-btn">13</button>
+                            <button onclick="adminGoToLevel(14)" class="lvl-btn">14</button>
+                            <button onclick="adminGoToLevel(15)" class="lvl-btn">15</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="admin-actions">
+                    <button id="invincibleBtn" class="admin-action-btn" onclick="adminToggleInvincible()">🛡️ مناعة</button>
+                    <button class="admin-action-btn" onclick="adminSkipLevel()">⏭️ تخطي</button>
+                    <button class="admin-action-btn" onclick="adminAddLives()">💖 حياة ∞</button>
+                </div>
+            </div>
+        </div>
         
         <!-- شريط المعلومات العلوي -->
         <div class="game-hud">
