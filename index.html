@@ -3,294 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مغامرات النينجا - لعبة المنصات الجبارة</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Amiri:wght@700&display=swap" rel="stylesheet">
+    <title>مغامرات النينجا</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Amiri:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- شاشة التسجيل -->
-    <div id="registerScreen" class="screen">
-        <div class="auth-container">
-            <h1 class="auth-title">
-                <span class="title-glow">مغامرات</span>
-                <span class="title-main">النينجا</span>
-            </h1>
-            <div class="auth-box">
-                <h2 class="auth-box-title">إنشاء حساب جديد</h2>
-                <form id="registerForm" class="auth-form">
-                    <div class="form-group">
-                        <label for="registerUsername">اسم المستخدم</label>
-                        <input type="text" id="registerUsername" placeholder="أدخل اسم المستخدم" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPassword">كلمة المرور</label>
-                        <input type="password" id="registerPassword" placeholder="أدخل كلمة المرور" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerConfirmPassword">تأكيد كلمة المرور</label>
-                        <input type="password" id="registerConfirmPassword" placeholder="أعد إدخال كلمة المرور" required>
-                    </div>
-                    <div class="error-message" id="registerError"></div>
-                    <button type="submit" class="btn btn-primary auth-btn">
-                        <span class="btn-text">إنشاء الحساب</span>
-                        <span class="btn-icon">✨</span>
-                    </button>
-                </form>
-                <p class="auth-switch">
-                    لديك حساب بالفعل؟ 
-                    <a href="#" id="showLoginFromRegister">تسجيل الدخول</a>
-                </p>
+<div id="registerScreen" class="screen">
+    <div class="auth-bg-effects"></div>
+    <div class="auth-wrapper">
+        <div class="auth-logo"><span class="logo-top">مغامرات</span><span class="logo-bottom">النينجا ⚔️</span></div>
+        <div class="auth-card">
+            <h2 class="auth-card-title">إنشاء حساب جديد</h2>
+            <form id="registerForm">
+                <div class="field"><label>اسم المستخدم</label><input type="text" id="reg_user" placeholder="مثال: ninja2024" required></div>
+                <div class="field"><label>كلمة المرور</label><input type="password" id="reg_pass" placeholder="4 أحرف على الأقل" required></div>
+                <div class="field"><label>تأكيد كلمة المرور</label><input type="password" id="reg_confirm" placeholder="أعد كتابة كلمة المرور" required></div>
+                <div class="auth-error" id="reg_error"></div>
+                <button type="submit" class="auth-submit-btn">إنشاء الحساب ✨</button>
+            </form>
+            <p class="auth-switch">لديك حساب؟ <a href="#" id="toLogin">تسجيل الدخول</a></p>
+        </div>
+    </div>
+</div>
+<div id="loginScreen" class="screen">
+    <div class="auth-bg-effects"></div>
+    <div class="auth-wrapper">
+        <div class="auth-logo"><span class="logo-top">مغامرات</span><span class="logo-bottom">النينجا ⚔️</span></div>
+        <div class="auth-card">
+            <h2 class="auth-card-title">تسجيل الدخول</h2>
+            <form id="loginForm">
+                <div class="field"><label>اسم المستخدم</label><input type="text" id="log_user" placeholder="أدخل اسمك" required></div>
+                <div class="field"><label>كلمة المرور</label><input type="password" id="log_pass" placeholder="أدخل كلمة المرور" required></div>
+                <div class="auth-error" id="log_error"></div>
+                <button type="submit" class="auth-submit-btn">دخول 🎮</button>
+            </form>
+            <p class="auth-switch">ليس لديك حساب؟ <a href="#" id="toRegister">إنشاء حساب</a></p>
+        </div>
+    </div>
+</div>
+<div id="mainScreen" class="screen">
+    <div class="main-stars"></div>
+    <header class="main-header">
+        <div class="player-badge">
+            <span class="player-avatar">🥷</span>
+            <div class="player-info">
+                <span class="player-name" id="mainUsername"></span>
+                <span class="player-coins">💎 <span id="mainCoins">0</span></span>
+            </div>
+        </div>
+        <h1 class="main-game-title">مغامرات النينجا</h1>
+        <button class="logout-header-btn" id="logoutBtn">خروج 🚪</button>
+    </header>
+    <nav class="bottom-nav">
+        <button class="nav-btn active" onclick="switchTab('levels')">🗺️ المراحل</button>
+        <button class="nav-btn" onclick="switchTab('shop')">🏪 المتجر</button>
+        <button class="nav-btn" onclick="switchTab('profile')">👤 ملفي</button>
+    </nav>
+    <div class="main-content" id="mainContent">
+        <div class="tab-pane active" id="levelsTab">
+            <h2 class="section-title">🗺️ اختر مرحلتك</h2>
+            <div class="levels-grid" id="levelsGrid"></div>
+        </div>
+        <div class="tab-pane" id="shopTab">
+            <h2 class="section-title">🏪 متجر المهارات</h2>
+            <div class="shop-grid" id="shopGrid"></div>
+        </div>
+        <div class="tab-pane" id="profileTab">
+            <div class="profile-card">
+                <div class="profile-avatar-big">🥷</div>
+                <h2 id="profileName"></h2>
+                <div class="profile-stats">
+                    <div class="pstat"><span class="pv" id="pTotalCoins">0</span><span class="pl">💎 مجموع الكوين</span></div>
+                    <div class="pstat"><span class="pv" id="pLevelsUnlocked">1</span><span class="pl">🔓 مراحل مفتوحة</span></div>
+                    <div class="pstat"><span class="pv" id="pBestLevel">1</span><span class="pl">🏆 أعلى مرحلة</span></div>
+                    <div class="pstat"><span class="pv" id="pItems">0</span><span class="pl">🎒 مقتنيات</span></div>
+                </div>
+                <h3 style="color:#08d9d6;margin-top:1.5rem;">🎒 مقتنياتي</h3>
+                <div class="owned-list" id="ownedList"></div>
             </div>
         </div>
     </div>
-
-    <!-- شاشة تسجيل الدخول -->
-    <div id="loginScreen" class="screen">
-        <div class="auth-container">
-            <h1 class="auth-title">
-                <span class="title-glow">مغامرات</span>
-                <span class="title-main">النينجا</span>
-            </h1>
-            <div class="auth-box">
-                <h2 class="auth-box-title">تسجيل الدخول</h2>
-                <form id="loginForm" class="auth-form">
-                    <div class="form-group">
-                        <label for="loginUsername">اسم المستخدم</label>
-                        <input type="text" id="loginUsername" placeholder="أدخل اسم المستخدم" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">كلمة المرور</label>
-                        <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" required>
-                    </div>
-                    <div class="error-message" id="loginError"></div>
-                    <button type="submit" class="btn btn-primary auth-btn">
-                        <span class="btn-text">دخول</span>
-                        <span class="btn-icon">🎮</span>
-                    </button>
-                </form>
-                <p class="auth-switch">
-                    ليس لديك حساب؟ 
-                    <a href="#" id="showRegisterFromLogin">إنشاء حساب جديد</a>
-                </p>
-            </div>
+</div>
+<div id="gameScreen" class="screen">
+    <div class="game-hud">
+        <div class="hud-item">💎 <span id="scoreDisplay">0</span></div>
+        <div class="hud-item">م <span id="levelDisplay">1</span></div>
+        <div class="hud-item">⏱ <span id="timeDisplay">0:00</span></div>
+        <div class="hud-item">❤️ <span id="livesDisplay">3</span></div>
+        <div class="hud-item" id="shieldHud" style="display:none;">🛡️ فعّال</div>
+        <div class="hud-item" id="speedHud" style="display:none;">⚡ سريع</div>
+    </div>
+    <div class="ingame-user" id="ingameUser"></div>
+    <canvas id="gameCanvas"></canvas>
+    <button class="pause-btn" id="pauseBtn">⏸</button>
+    <div class="admin-panel" id="adminPanel" style="display:none;">
+        <div class="ap-title">👑 لوحة التحكم</div>
+        <div id="apLevelGrid" class="ap-lvl-grid"></div>
+        <div class="ap-actions">
+            <button class="ap-btn" id="btnInvincible" onclick="adminToggleInvincible()">🛡️ مناعة</button>
+            <button class="ap-btn" onclick="adminSkipLevel()">⏭️ تخطي</button>
+            <button class="ap-btn" onclick="adminAddLives()">💖 ∞</button>
         </div>
     </div>
-
-    <!-- شاشة البداية -->
-    <div id="startScreen" class="screen">
-        <div class="stars"></div>
-        <div class="title-container">
-            <h1 class="game-title">
-                <span class="title-glow">مغامرات</span>
-                <span class="title-main">النينجا</span>
-            </h1>
-            <p class="game-subtitle">اهرب من الأعداء واجمع الكنوز!</p>
-            <div class="start-buttons">
-                <button id="startBtn" class="btn btn-primary">
-                    <span class="btn-text">ابدأ المغامرة</span>
-                    <span class="btn-icon">⚔️</span>
-                </button>
-                <button id="instructionsBtn" class="btn btn-secondary">
-                    <span class="btn-text">التعليمات</span>
-                    <span class="btn-icon">📜</span>
-                </button>
-            </div>
-        </div>
-        <div class="floating-elements">
-            <div class="float-coin">💎</div>
-            <div class="float-coin">⭐</div>
-            <div class="float-coin">🔥</div>
-        </div>
+</div>
+<div id="pauseScreen" class="screen overlay-screen">
+    <div class="overlay-card">
+        <h2>⏸️ توقف</h2>
+        <button class="btn-fire" id="resumeBtn">▶️ متابعة</button>
+        <button class="btn-ice" id="restartBtn">🔄 إعادة</button>
+        <button class="btn-dark" id="quitBtn">🏠 القائمة</button>
     </div>
-
-    <!-- شاشة التعليمات -->
-    <div id="instructionsScreen" class="screen">
-        <div class="modal-content">
-            <h2 class="modal-title">كيف تلعب؟</h2>
-            <div class="instructions-grid">
-                <div class="instruction-item">
-                    <div class="key-icon">→ ←</div>
-                    <p>الأسهم للتحرك</p>
-                </div>
-                <div class="instruction-item">
-                    <div class="key-icon">SPACE</div>
-                    <p>للقفز</p>
-                </div>
-                <div class="instruction-item">
-                    <div class="icon-large">💎</div>
-                    <p>اجمع الألماس</p>
-                </div>
-                <div class="instruction-item">
-                    <div class="icon-large">👹</div>
-                    <p>تجنب الأعداء</p>
-                </div>
-                <div class="instruction-item">
-                    <div class="icon-large">🔥</div>
-                    <p>احذر النار</p>
-                </div>
-                <div class="instruction-item">
-                    <div class="icon-large">⭐</div>
-                    <p>احصل على 3 نجوم</p>
-                </div>
-            </div>
-            <button id="backBtn" class="btn btn-primary">عودة</button>
+</div>
+<div id="gameOverScreen" class="screen overlay-screen">
+    <div class="overlay-card">
+        <h2 class="over-title">💀 انتهت اللعبة</h2>
+        <div class="result-stats">
+            <div class="rs"><span id="go_score">0</span><small>نقاط</small></div>
+            <div class="rs"><span id="go_level">1</span><small>مرحلة</small></div>
+            <div class="rs"><span id="go_time">0:00</span><small>وقت</small></div>
         </div>
+        <div class="stars-row" id="go_stars"></div>
+        <button class="btn-fire" id="playAgainBtn">🔄 مجدداً</button>
+        <button class="btn-dark" id="goToMenuBtn">🏠 القائمة</button>
     </div>
-
-    <!-- شاشة اللعب -->
-    <div id="gameScreen" class="screen">
-        <!-- اسم اللاعب وزر الخروج -->
-        <div class="user-info">
-            <div class="username-display">
-                <span class="user-icon">👤</span>
-                <span id="displayUsername"></span>
-            </div>
+</div>
+<div id="levelCompleteScreen" class="screen overlay-screen">
+    <div class="overlay-card">
+        <h2 class="win-title">🎉 أحسنت!</h2>
+        <div class="result-stats">
+            <div class="rs"><span id="lc_score">0</span><small>نقاط</small></div>
+            <div class="rs"><span id="lc_coins">0</span><small>💎 كوين</small></div>
+            <div class="rs"><span id="lc_time">0:00</span><small>وقت</small></div>
         </div>
-        
-        <!-- زر تسجيل الخروج -->
-        <button id="logoutBtn" class="logout-btn">
-            <span>تسجيل الخروج</span>
-            <span class="logout-icon">🚪</span>
-        </button>
-
-        <!-- لوحة الأدمن - تظهر فقط للـ owner -->
-        <div id="adminPanel" class="admin-panel" style="display:none;">
-            <div class="admin-header">
-                <span>👑 لوحة التحكم</span>
-            </div>
-            <div class="admin-controls">
-                <div class="admin-level-select">
-                    <label>انتقل للمرحلة:</label>
-                    <div class="level-buttons">
-                        <div class="level-row">
-                            <button onclick="adminGoToLevel(1)"  class="lvl-btn">1</button>
-                            <button onclick="adminGoToLevel(2)"  class="lvl-btn">2</button>
-                            <button onclick="adminGoToLevel(3)"  class="lvl-btn">3</button>
-                            <button onclick="adminGoToLevel(4)"  class="lvl-btn">4</button>
-                            <button onclick="adminGoToLevel(5)"  class="lvl-btn">5</button>
-                        </div>
-                        <div class="level-row">
-                            <button onclick="adminGoToLevel(6)"  class="lvl-btn">6</button>
-                            <button onclick="adminGoToLevel(7)"  class="lvl-btn">7</button>
-                            <button onclick="adminGoToLevel(8)"  class="lvl-btn">8</button>
-                            <button onclick="adminGoToLevel(9)"  class="lvl-btn">9</button>
-                            <button onclick="adminGoToLevel(10)" class="lvl-btn">10</button>
-                        </div>
-                        <div class="level-row">
-                            <button onclick="adminGoToLevel(11)" class="lvl-btn">11</button>
-                            <button onclick="adminGoToLevel(12)" class="lvl-btn">12</button>
-                            <button onclick="adminGoToLevel(13)" class="lvl-btn">13</button>
-                            <button onclick="adminGoToLevel(14)" class="lvl-btn">14</button>
-                            <button onclick="adminGoToLevel(15)" class="lvl-btn">15</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="admin-actions">
-                    <button id="invincibleBtn" class="admin-action-btn" onclick="adminToggleInvincible()">🛡️ مناعة</button>
-                    <button class="admin-action-btn" onclick="adminSkipLevel()">⏭️ تخطي</button>
-                    <button class="admin-action-btn" onclick="adminAddLives()">💖 حياة ∞</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- شريط المعلومات العلوي -->
-        <div class="game-hud">
-            <div class="hud-item">
-                <span class="hud-icon">💎</span>
-                <span class="hud-value" id="scoreDisplay">0</span>
-            </div>
-            <div class="hud-item">
-                <span class="hud-icon">⏱️</span>
-                <span class="hud-value" id="timeDisplay">0:00</span>
-            </div>
-            <div class="hud-item">
-                <span class="hud-icon">❤️</span>
-                <span class="hud-value" id="livesDisplay">3</span>
-            </div>
-            <div class="hud-item level-display">
-                <span class="hud-label">المستوى</span>
-                <span class="hud-value" id="levelDisplay">1</span>
-            </div>
-        </div>
-
-        <!-- منطقة اللعب -->
-        <canvas id="gameCanvas"></canvas>
-
-        <!-- زر الإيقاف المؤقت -->
-        <button id="pauseBtn" class="pause-btn">⏸️</button>
+        <div class="stars-row" id="lc_stars"></div>
+        <button class="btn-ice" id="nextLevelBtn">➡️ التالي</button>
+        <button class="btn-dark" id="lc_menuBtn">🏠 القائمة</button>
     </div>
-
-    <!-- شاشة الإيقاف المؤقت -->
-    <div id="pauseScreen" class="screen">
-        <div class="modal-content">
-            <h2 class="modal-title">⏸️ اللعبة متوقفة</h2>
-            <div class="pause-buttons">
-                <button id="resumeBtn" class="btn btn-primary">
-                    <span class="btn-text">متابعة</span>
-                    <span class="btn-icon">▶️</span>
-                </button>
-                <button id="restartBtn" class="btn btn-secondary">
-                    <span class="btn-text">إعادة البدء</span>
-                    <span class="btn-icon">🔄</span>
-                </button>
-                <button id="quitBtn" class="btn btn-danger">
-                    <span class="btn-text">الخروج</span>
-                    <span class="btn-icon">🚪</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- شاشة نهاية اللعبة -->
-    <div id="gameOverScreen" class="screen">
-        <div class="modal-content">
-            <h2 class="modal-title game-over-title">💀 انتهت اللعبة</h2>
-            <div class="final-stats">
-                <div class="stat-item">
-                    <span class="stat-label">النقاط</span>
-                    <span class="stat-value" id="finalScore">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">المستوى</span>
-                    <span class="stat-value" id="finalLevel">1</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">الوقت</span>
-                    <span class="stat-value" id="finalTime">0:00</span>
-                </div>
-            </div>
-            <div class="stars-earned" id="starsEarned"></div>
-            <button id="playAgainBtn" class="btn btn-primary">
-                <span class="btn-text">العب مجدداً</span>
-                <span class="btn-icon">🔄</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- شاشة الفوز بالمستوى -->
-    <div id="levelCompleteScreen" class="screen">
-        <div class="modal-content">
-            <h2 class="modal-title victory-title">🎉 رائع! أكملت المستوى</h2>
-            <div class="level-stats">
-                <div class="stat-item">
-                    <span class="stat-label">النقاط المكتسبة</span>
-                    <span class="stat-value" id="levelScore">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">الوقت</span>
-                    <span class="stat-value" id="levelTime">0:00</span>
-                </div>
-            </div>
-            <div class="stars-earned" id="levelStars"></div>
-            <button id="nextLevelBtn" class="btn btn-primary">
-                <span class="btn-text">المستوى التالي</span>
-                <span class="btn-icon">➡️</span>
-            </button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
