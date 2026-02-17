@@ -52,21 +52,32 @@ let keys = {};
 // نظام المستخدم
 let currentUser = null;
 
+// بيانات الأدمن الثابتة
+const OWNER = {
+    username: 'owner',
+    password: 'owner123',
+    isAdmin: true
+};
+
 // ========================================
 // نظام التسجيل وتسجيل الدخول
 // ========================================
 
-// التحقق من تسجيل الدخول
+function isOwner() {
+    return currentUser && currentUser.username === OWNER.username && currentUser.isAdmin;
+}
+
 function checkLogin() {
     const savedUser = localStorage.getItem('ninjaGameUser');
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
+        // تأكد من صلاحيات الأدمن
+        if (currentUser.username === OWNER.username) currentUser.isAdmin = true;
         return true;
     }
     return false;
 }
 
-// عرض شاشة التسجيل أو تسجيل الدخول
 function initAuth() {
     const hasAccount = localStorage.getItem('ninjaGameAccount');
     if (hasAccount) {
@@ -76,88 +87,128 @@ function initAuth() {
     }
 }
 
-// تحديث عرض اسم المستخدم
 function updateUserDisplay() {
-    if (currentUser) {
-        document.getElementById('displayUsername').textContent = currentUser.username;
+    if (!currentUser) return;
+    const el = document.getElementById('displayUsername');
+    if (isOwner()) {
+        el.innerHTML = `👑 ${currentUser.username} <span class="owner-badge">ADMIN</span>`;
+    } else {
+        el.textContent = currentUser.username;
     }
+    // إظهار لوحة الأدمن إذا كان owner
+    const adminPanel = document.getElementById('adminPanel');
+    if (adminPanel) adminPanel.style.display = isOwner() ? 'flex' : 'none';
 }
 
-// تسجيل حساب جديد
 function registerUser(username, password, confirmPassword) {
-    // التحقق من وجود حساب مسبق
     if (localStorage.getItem('ninjaGameAccount')) {
         return { success: false, message: 'يوجد حساب مسجل بالفعل!' };
     }
-    
-    // التحقق من البيانات
     if (!username || username.length < 3) {
         return { success: false, message: 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل' };
     }
-    
+    if (username.toLowerCase() === 'owner') {
+        return { success: false, message: 'هذا الاسم محجوز!' };
+    }
     if (!password || password.length < 4) {
         return { success: false, message: 'كلمة المرور يجب أن تكون 4 أحرف على الأقل' };
     }
-    
     if (password !== confirmPassword) {
         return { success: false, message: 'كلمة المرور غير متطابقة' };
     }
-    
-    // حفظ الحساب
-    const account = {
-        username: username,
-        password: password,
-        createdAt: new Date().toISOString()
-    };
-    
+    const account = { username, password, createdAt: new Date().toISOString() };
     localStorage.setItem('ninjaGameAccount', JSON.stringify(account));
-    
-    // تسجيل دخول تلقائي
-    currentUser = { username: username };
+    currentUser = { username };
     localStorage.setItem('ninjaGameUser', JSON.stringify(currentUser));
-    
     return { success: true };
 }
 
-// تسجيل الدخول
 function loginUser(username, password) {
+    // تحقق من حساب الأدمن أولاً
+    if (username === OWNER.username && password === OWNER.password) {
+        currentUser = { username: OWNER.username, isAdmin: true };
+        localStorage.setItem('ninjaGameUser', JSON.stringify(currentUser));
+        return { success: true };
+    }
+
     const savedAccount = localStorage.getItem('ninjaGameAccount');
-    
     if (!savedAccount) {
         return { success: false, message: 'لا يوجد حساب مسجل! يرجى إنشاء حساب جديد' };
     }
-    
     const account = JSON.parse(savedAccount);
-    
     if (account.username !== username) {
         return { success: false, message: 'اسم المستخدم غير صحيح' };
     }
-    
     if (account.password !== password) {
         return { success: false, message: 'كلمة المرور غير صحيحة' };
     }
-    
-    // تسجيل الدخول
-    currentUser = { username: username };
+    currentUser = { username };
     localStorage.setItem('ninjaGameUser', JSON.stringify(currentUser));
-    
     return { success: true };
 }
 
-// تسجيل الخروج
 function logoutUser() {
     localStorage.removeItem('ninjaGameUser');
     currentUser = null;
-    
-    // إيقاف اللعبة إذا كانت تعمل
     if (gameState === 'playing' || gameState === 'paused') {
         gameState = 'menu';
         clearInterval(gameInterval);
         clearInterval(timeInterval);
     }
-    
-    // العودة لشاشة تسجيل الدخول
     showScreen('loginScreen');
+}
+
+// ========================================
+// صلاحيات الأدمن
+// ========================================
+function adminGoToLevel(level) {
+    const lvl = parseInt(level);
+    if (isNaN(lvl) || lvl < 1 || lvl > 15) return;
+    
+    currentLevel = lvl;
+    score = 0;
+    lives = 999;
+    gameTime = 0;
+
+    if (!canvas) {
+        canvas = document.getElementById('gameCanvas');
+        ctx = canvas.getContext('2d');
+    }
+    canvas.width = CONFIG.canvas.width;
+    canvas.height = CONFIG.canvas.height;
+
+    loadLevel(currentLevel);
+    updateHUD();
+    gameState = 'playing';
+    showScreen('gameScreen');
+    clearInterval(gameInterval);
+    clearInterval(timeInterval);
+    gameLoop();
+    gameInterval = setInterval(gameLoop, 1000 / 60);
+    timeInterval = setInterval(updateTime, 1000);
+    
+    // تحديث زر المرحلة النشطة
+    document.querySelectorAll('.lvl-btn').forEach(btn => {
+        btn.classList.remove('active-level');
+        if (parseInt(btn.textContent) === lvl) btn.classList.add('active-level');
+    });
+}
+
+function adminToggleInvincible() {
+    if (!player) return;
+    player.invincible = !player.invincible;
+    player.invincibleTimer = player.invincible ? 999999 : 0;
+    const btn = document.getElementById('invincibleBtn');
+    if (btn) btn.textContent = player.invincible ? '🛡️ متفعّل' : '🛡️ مناعة';
+}
+
+function adminSkipLevel() {
+    completeLevel();
+}
+
+function adminAddLives() {
+    lives = 999;
+    updateHUD();
 }
 
 // ========================================
